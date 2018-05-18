@@ -1,23 +1,16 @@
-#include "Servo.h"
-#include "Stockroom.h"
 #include "Command.h"
 #include "Component.h"
+#include "Sorter.h"
 #include "Engine.h"
 #include "LightSensor.h"
-#include <Servo.h>
+#include <Servo\src\Servo.h>
 
-Engine * xAxes = new Engine(0, 1);
-Engine * yAxes = new Engine(1, 2);
-LightSensor * stockroomXLocater = new LightSensor(3);
-LightSensor * stockroomYLocater = new LightSensor(9);
-Servo * spoon = new Servo();
-LightSensor * positionLocater = new LightSensor(10);
+Engine * sorter;
 
-Command * commands = new Command(xAxes, yAxes, stockroomXLocater, stockroomYLocater, spoon, positionLocater);
+Command * commands = new Command(sorter);
 
 void setup() {
 	Serial.begin(9600);
-	spoon->attach(8);
 	loop();
 }
 

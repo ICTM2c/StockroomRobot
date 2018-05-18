@@ -5,7 +5,8 @@
 #include "Command.h"
 
 void Command::addCommand(String command, int parameter) {
-	if (command.compareTo("addProduct") || command.compareTo("start")) {
+	if (command.compareTo("addProduct") || command.compareTo("start") || command.compareTo("moveDown") || command.compareTo("moveLeft")
+		|| command.compareTo("moveRight") || command.compareTo("pickUp") || command.compareTo("addToBin")) {
 		action *temp = new action;
 
 		temp->command = command;
@@ -42,6 +43,7 @@ void Command::executeCommand() {
 		String parameter = head->parameter;
 		int x = NULL;
 		int y = NULL;
+		int bin = NULL;
 
 		int depth = 0;
 		for (int i = 0; i < parameter.length(); i++) {
@@ -55,30 +57,41 @@ void Command::executeCommand() {
 			}
 			else if (depth == 1) {
 				if (parameter[i] == ',' || !isdigit(parameter[i])) {
-					break;
+					depth++;
 				}
 				else {
 					y += parameter[i];
 				}
 			}
+			else {
+				if (parameter[i] == ',' || !isdigit(parameter[i])) {
+					break;
+				}
+				else {
+					bin += parameter[i];
+				}
+			}
 		}
 
-		if (!x || !y) {
-
+		if (!x || !y || !bin) {
+			
 		}
 		else {
 			_stockroom->addCoordinate(x, y);
+			_sorter->addBin(bin);
 		}
 	}
-	else if (head->command.compareTo("start")) {
+
+	if (head->command.compareTo("start")) {
 		while (!_stockroom->start()) {
 			busy = true;
 		}
 
 		actionCompleted();
 	}
-	else if (head->command.compareTo("dropCargo")) {
-		while (!_stockroom->dropCargo()) {
+
+	else if (head->command.compareTo("addToBin")) {
+		while (!_outgoing->sort(head->parameter)) {
 			busy = true;
 		}
 

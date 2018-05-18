@@ -8,5 +8,5 @@ public:
 
 	}
 
-	void sort(int bin);
+	bool sort(int bin);
 };

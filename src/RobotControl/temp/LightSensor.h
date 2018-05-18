@@ -41,7 +41,7 @@ public:
 		_initialValue = GetCurrentValue();
 	}
 
-	int targetPosition(int movePositions, int positionsMoved);
+	bool targetPosition(int movePositions);
 
 	int GetCurrentValue();
 

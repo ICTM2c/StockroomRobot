@@ -2,14 +2,15 @@
 #include "LightSensor.h"
 
 
-int LightSensor::targetPosition(int movePositions, int positionsMoved) {
-	if (positionsMoved < movePositions) {
+bool LightSensor::targetPosition(int movePositions) {
+	int positionsMoved = 0;
+	while (positionsMoved < movePositions) {
 		if (GetDifference() > 200) {
 			positionsMoved++;
 		}
 	}
 
-	return positionsMoved;
+	return true;
 }
 
 /**
