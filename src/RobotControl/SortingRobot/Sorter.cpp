@@ -38,8 +38,14 @@ void Sorter::finished() {
 bool Sorter::start() {
 	current = head;
 	while (current != NULL) {
-		sort(current->dropin);
-		nextProduct();
+		Serial.write("Next");
+
+		if (Serial.available() > 0) {
+			if (Serial.readString().compareTo("Okay")) {
+				sort(current->dropin);
+				nextProduct();
+			}
+		}
 	}
 	finished();
 
@@ -50,6 +56,6 @@ void Sorter::sort(int bin) {
 	Direction direction = (bin == 1) ? Clockwise : Counterclockwise;
 
 	_sorter->run(150, direction);
-	delay(500);
+	delay(1000);
 	_sorter->stop();
 }

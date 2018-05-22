@@ -1,3 +1,8 @@
+#include "Engine.h"
+#include "Sorter.h"
+
+#pragma once
+
 struct action {
 	String command;
 	int parameter;

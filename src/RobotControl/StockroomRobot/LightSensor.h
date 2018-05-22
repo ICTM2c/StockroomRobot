@@ -11,17 +11,9 @@
 
 #endif
 
-#include "Component.h"
-#include "Arduino.h"
-
 #pragma once
 
-class Component;
-
-//class Component;
-//class Engine;
-
-class LightSensor : public Component {
+class LightSensor {
 private:
 	int _pin;
 	int _initialValue;

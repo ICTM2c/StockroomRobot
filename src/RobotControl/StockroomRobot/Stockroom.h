@@ -1,3 +1,9 @@
+#pragma once
+
+#include "Engine.h"
+#include "LightSensor.h"
+#include "Servo.h"
+
 // Stockroom.h
 
 struct coordinate {

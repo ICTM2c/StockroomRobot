@@ -83,21 +83,15 @@
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Command.h" />
-    <ClInclude Include="Component.h" />
-    <ClInclude Include="Coordinate.h" />
     <ClInclude Include="Engine.h" />
     <ClInclude Include="LightSensor.h" />
-    <ClInclude Include="Sorter.h" />
     <ClInclude Include="Stockroom.h" />
     <ClInclude Include="__vm\.StockroomRobot.vsarduino.h" />
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="Command.cpp" />
-    <ClCompile Include="Component.cpp" />
-    <ClCompile Include="Coordinate.cpp" />
     <ClCompile Include="Engine.cpp" />
     <ClCompile Include="LightSensor.cpp" />
-    <ClCompile Include="Sorter.cpp" />
     <ClCompile Include="Stockroom.cpp" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />

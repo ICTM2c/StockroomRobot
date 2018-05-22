@@ -12,14 +12,14 @@
 
 #endif
 
-class Component;
+#pragma once
 
 enum Direction {
 	Clockwise,
 	Counterclockwise,
 };
 
-class Engine : public Component {
+class Engine {
 private:
 	int _powerPin;
 	int _directionPin;

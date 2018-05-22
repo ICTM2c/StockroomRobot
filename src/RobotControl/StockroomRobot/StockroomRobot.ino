@@ -1,7 +1,8 @@
+#pragma once
+
 #include "Servo.h"
 #include "Stockroom.h"
 #include "Command.h"
-#include "Component.h"
 #include "Engine.h"
 #include "LightSensor.h"
 #include <Servo.h>

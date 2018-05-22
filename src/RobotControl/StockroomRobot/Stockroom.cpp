@@ -43,7 +43,7 @@ bool Stockroom::start() {
 	findProducts();
 	moveToSorter();
 
-	Serial.write("Gathering of products completed.");
+	Serial.write("Done");
 	return true;
 }
 
@@ -112,9 +112,9 @@ void Stockroom::move(int x, int y, Direction directionX, Direction directionY) {
 }
 
 void Stockroom::pickUp() {
-	spoon->write(90);
+	_spoon->write(90);
 	delay(1000);
-	spoon->write(0);
+	_spoon->write(0);
 }
 
 void Stockroom::moveToSorter() {
@@ -166,15 +166,18 @@ void Stockroom::moveToSorter() {
 			_yAxes->run(150, Clockwise);
 		}
 
-		atDropHeight = positionLocater->targetPosition(1, atDropHeight);
+		atDropHeight = _positionLocater->targetPosition(1, atDropHeight);
 	}
 
 	finished();
 }
 
 bool Stockroom::dropCargo() {
+	Serial.write("Okay");
+
 	_spoon->write(90);
 	delay(1000);
 	_spoon->write(0);
+
 	return true;
 }

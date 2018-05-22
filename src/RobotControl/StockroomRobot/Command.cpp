@@ -5,7 +5,7 @@
 #include "Command.h"
 
 void Command::addCommand(String command, int parameter) {
-	if (command.compareTo("addProduct") || command.compareTo("start")) {
+	if (command.compareTo("addProduct") || command.compareTo("start") || command.compareTo("okay")) {
 		action *temp = new action;
 
 		temp->command = command;
@@ -77,7 +77,7 @@ void Command::executeCommand() {
 
 		actionCompleted();
 	}
-	else if (head->command.compareTo("dropCargo")) {
+	else if (head->command.compareTo("okay")) {
 		while (!_stockroom->dropCargo()) {
 			busy = true;
 		}

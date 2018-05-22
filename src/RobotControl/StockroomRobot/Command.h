@@ -1,6 +1,13 @@
+#pragma once
+
+#include "Engine.h"
+#include "LightSensor.h"
+#include "Server.h"
+#include "Stockroom.h"
+
 struct action {
 	String command;
-	int parameter;
+	String parameter;
 	action *next;
 };
 

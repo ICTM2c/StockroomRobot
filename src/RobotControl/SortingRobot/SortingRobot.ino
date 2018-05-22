@@ -1,9 +1,9 @@
 #include "Command.h"
-#include "Component.h"
 #include "Sorter.h"
 #include "Engine.h"
 #include "LightSensor.h"
-#include <Servo\src\Servo.h>
+
+#pragma once
 
 Engine * sorter;
 
@@ -28,7 +28,7 @@ void loop() {
 
 void queueCommand(String acquiredCommand) {
 	String command;
-	int parameter = NULL;
+	int parameter;
 
 	int depth = 0;
 	for (int i = 0; i < acquiredCommand.length(); i++) {
@@ -41,7 +41,7 @@ void queueCommand(String acquiredCommand) {
 			}
 		}
 		else {
-			if (acquiredCommand[i] == ' ') {
+			if (acquiredCommand[i] == ' ' || !isdigit(acquiredCommand[i])) {
 				break;
 			}
 			else {
