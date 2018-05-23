@@ -38,10 +38,10 @@ void Sorter::finished() {
 bool Sorter::start() {
 	current = head;
 	while (current != NULL) {
-		Serial.write("Next");
+		Serial.write("next");
 
 		if (Serial.available() > 0) {
-			if (Serial.readString().compareTo("Okay")) {
+			if (Serial.readString().compareTo("okay")) {
 				sort(current->dropin);
 				nextProduct();
 			}

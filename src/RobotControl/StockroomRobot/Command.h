@@ -1,9 +1,9 @@
-#pragma once
-
 #include "Engine.h"
 #include "LightSensor.h"
 #include "Server.h"
 #include "Stockroom.h"
+
+#pragma once
 
 struct action {
 	String command;
@@ -38,7 +38,7 @@ public:
 		tail = NULL;
 	}
 
-	void addCommand(String command, int parameter);
+	void addCommand(String command, String parameter);
 
 	bool doingNothing();
 

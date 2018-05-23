@@ -11,9 +11,15 @@ Command * commands = new Command(sorter);
 
 void setup() {
 	Serial.begin(9600);
+	sorter->setup();
 	loop();
 }
 
+/**
+* Continuously loops to see if a command has been entered in the Serial or commands is giving permission to begin
+* Sends a command to be queued if it receives ones
+* Executes a command if no action is being performed
+*/
 void loop() {
 	while (1) {
 		if (Serial.available() > 0) {
@@ -26,9 +32,13 @@ void loop() {
 	}
 }
 
+/**
+* Loops through the Serial input as a character array, splitting the command and parameters
+* Passes the command and parameter to commands to be made into an action
+*/
 void queueCommand(String acquiredCommand) {
 	String command;
-	int parameter;
+	String parameter;
 
 	int depth = 0;
 	for (int i = 0; i < acquiredCommand.length(); i++) {
@@ -41,7 +51,7 @@ void queueCommand(String acquiredCommand) {
 			}
 		}
 		else {
-			if (acquiredCommand[i] == ' ' || !isdigit(acquiredCommand[i])) {
+			if (acquiredCommand[i] == ' ') {
 				break;
 			}
 			else {
