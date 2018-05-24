@@ -6,16 +6,26 @@
 
 // Stockroom.h
 
-struct coordinate {
-	int x;
-	int y;
-	coordinate *next;
+struct Coordinate {
+	int _x;
+	int _y;
+	
+	Coordinate(int x, int y) {
+		_x = x;
+		_y = y;
+	}
+
+	int getX() {
+		return _x;
+	}
+
+	int getY() {
+		return _y;
+	}
 };
 
 class Stockroom {
 private:
-	coordinate * head, * tail, * current;
-	
 	Engine * _xAxes;
 	Engine * _yAxes;
 	LightSensor * _stockroomXLocater;
@@ -24,6 +34,7 @@ private:
 	LightSensor * _positionLocater;
 
 	bool _busy = false;
+	std::vector<Coordinate&> _coordinates = std::vector<Coordinate&>();
 
 public:
 	Stockroom(Engine * xAxes, Engine * yAxes, LightSensor * stockroomXLocater, LightSensor * stockroomYLocater, Servo * spoon, LightSensor * positionLocater) :

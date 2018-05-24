@@ -10,24 +10,8 @@
 */
 void Command::addCommand(String command, String parameter) {
 	if (command.compareTo("addProduct") || command.compareTo("start") || command.compareTo("okay")) {
-		action *temp = new action;
-
-		temp->command = command;
-		temp->parameter = parameter;
-		temp->next = NULL;
-
-		if (head == NULL) {
-			head = temp;
-			tail = temp;
-		}
-		else {
-			tail->next = temp;
-			tail = temp;
-		}
-
-		delete temp;
-		
-		Serial.println("DEBUG: " + head->command + " " + head->parameter + " added.");
+		_commandList.push_back(new CommandItem(command, parameter));
+		Serial.println("DEBUG: " + command + " " + parameter + " added.");
 	}
 }
 
@@ -36,7 +20,7 @@ void Command::addCommand(String command, String parameter) {
 * This way the program doesn't continue while another action has not been completed
 */
 bool Command::doingNothing() {
-	return !busy;
+	return !_busy;
 }
 
 /**
@@ -45,15 +29,7 @@ bool Command::doingNothing() {
 * Sets busy to false, so the next action can be executed
 */
 void Command::actionCompleted() {
-	Serial.println("DEBUG: Current head -> " + head->command + " " + head->parameter);
-	action *temp = new action;
-	temp = head;
-	head = head->next;
-	delete temp;
-
-	Serial.println("DEBUG: New head -> " + head->command + " " + head->parameter);
-
-	busy = false;
+	
 }
 
 /**
@@ -64,8 +40,10 @@ void Command::actionCompleted() {
 * If next: tell the Stockroom to drop one of the products on the spoon
 */
 void Command::executeCommand() {
-	if (head->command.compareTo("addProduct")) {
-		String parameter = head->parameter;
+	String command = _commandList.front().getCommand();
+	String parameter = _commandList.front().getParameter();
+
+	if (parameter.compareTo("addProduct")) {
 		int x = NULL;
 		int y = NULL;
 
@@ -76,7 +54,7 @@ void Command::executeCommand() {
 					depth++;
 				}
 				else {
-					x += parameter[i];
+					x += (int)parameter[i];
 				}
 			}
 			else if (depth == 1) {
@@ -84,7 +62,7 @@ void Command::executeCommand() {
 					break;
 				}
 				else {
-					y += parameter[i];
+					y += (int)parameter[i];
 				}
 			}
 		}
@@ -96,22 +74,22 @@ void Command::executeCommand() {
 			_stockroom->addCoordinate(x, y);
 		}
 	}
-	else if (head->command.compareTo("start")) {
+	else if (command.compareTo("start")) {
 		Serial.println("DEBUG: Stockroom procedure started.");
 		
 		while (!_stockroom->start()) {
-			busy = true;
+			_busy = false;
 		}
 
 		Serial.println("DEBUG: Stockroom procedure ended.");
 
 		actionCompleted();
 	}
-	else if (head->command.compareTo("next")) {
+	else if (command.compareTo("next")) {
 		Serial.println("DEBUG: Dropping cargo.");
 
 		while (!_stockroom->dropCargo()) {
-			busy = true;
+			_busy = true;
 		}
 
 		Serial.println("DEBUG: Cargo dropped.");

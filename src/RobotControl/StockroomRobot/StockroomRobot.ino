@@ -1,5 +1,6 @@
 #pragma once
 
+#include <ArduinoSTL.h>
 #include "Servo.h"
 #include "Stockroom.h"
 #include "Command.h"
@@ -21,8 +22,8 @@ Command * commands = new Command(xAxes, yAxes, stockroomXLocater, stockroomYLoca
 */
 void setup() {
 	Serial.begin(9600);
-	spoon->attach(3);
-	spoon->write(160);
+	//spoon->attach(3);
+	//spoon->write(160);
 
 	delay(1000);
 	stockroomXLocater->setup();
@@ -37,11 +38,11 @@ void setup() {
 * Executes a command if no action is being performed
 */
 void loop() {
-	queueCommand("addProduct 1,0");
-	queueCommand("addProduct 3,0");
-	queueCommand("addProduct 4,0");
+	queueCommand("addProduct 1,2");
+	queueCommand("addProduct 3,4");
+	queueCommand("addProduct 4,5");
 	queueCommand("start");
-	while (1) {
+
 		if (Serial.available() > 0) {
 			String acquiredCommand = Serial.readString();
 			queueCommand(acquiredCommand);
@@ -49,7 +50,6 @@ void loop() {
 		if (commands->doingNothing()) {
 			commands->executeCommand();
 		}
-	}
 }
 
 /**
@@ -57,7 +57,7 @@ void loop() {
 * Passes the command and parameter to commands to be made into an action
 */
 void queueCommand(String acquiredCommand) {
-	String command;
+	String CommandItem;
 	String parameter;
 
 	int depth = 0;
@@ -67,7 +67,7 @@ void queueCommand(String acquiredCommand) {
 				depth++;
 			}
 			else {
-				command += acquiredCommand[i];
+				CommandItem += acquiredCommand[i];
 			}
 		}
 		else {
@@ -80,5 +80,5 @@ void queueCommand(String acquiredCommand) {
 		}
 	}
 
-	commands->addCommand(command, parameter);
+	commands->addCommand(CommandItem, parameter);
 }

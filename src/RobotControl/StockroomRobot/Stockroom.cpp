@@ -9,29 +9,9 @@
 * If no coordinates have been added yet, set head to x = 1 & y = 1
 */
 void Stockroom::addCoordinate(int x, int y) {
-	coordinate *temp = new coordinate;
+	_coordinates.push_back(new Coordinate(x, y));
 
-	temp->x = x;
-	temp->y = y;
-	temp->next = NULL;
-
-	if (head == NULL) {
-		current = temp;
-		
-		head->x = 1;
-		head->y = 1;
-		head->next = current;
-
-		tail = temp;
-	}
-	else {
-		tail->next = temp;
-		tail = temp;
-	}
-
-	delete temp;
-
-	Serial.println("DEBUG: addCoordinate head -> " + (String) head->x + ", " + (String) head->y + ", current -> " + (String) current->x + ", " + (String)current->y + ".");
+	Serial.println("DEBUG: addCoordinate " + (String)x + "," + (String)y + ".");
 }
 
 /**
@@ -39,26 +19,14 @@ void Stockroom::addCoordinate(int x, int y) {
 * Picks the next coordinate to go to out of the list and set current to it
 */
 void Stockroom::nextCoordinate() {
-	head = current;
-	
-	coordinate *temp = new coordinate;
-	temp = head;
-	head = temp->next;
-	delete temp;
+	_coordinates.erase(_coordinates.begin(), _coordinates.begin() + 1);
 }
 
-/** 
+/**
 * Deletes the linked list when all products have been gathered
 */
 void Stockroom::finished() {
-	while (head != NULL) {
-		coordinate *temp = new coordinate;
-		temp = head;
-		head = head->next;
-		delete temp;
-	}
-
-	delete current;
+	Serial.write("done");
 }
 
 /**
@@ -84,7 +52,7 @@ bool Stockroom::start() {
 void Stockroom::moveToStockroom() {
 	Serial.println("DEBUG: Moving to stockroom.");
 	int stockroomReached = 0;
-	
+
 	while (stockroomReached < 1) {
 		if (stockroomReached == 1) {
 			_xAxes->stop();
@@ -105,17 +73,15 @@ void Stockroom::moveToStockroom() {
 * Upon arrival pickUp will pick the product up
 */
 void Stockroom::findProducts() {
-	if (current == NULL) {
-		current = head;
-	}
+	for(int i = 0; i < _coordinates.size(); i++) {
+		Direction directionX = (_coordinates[i + 1]->getX() > _coordinates[i]->getX()) ? Counterclockwise : Clockwise;
+		Direction directionY = (_coordinates[i + 1]->getY() > _coordinates[i]->getY()) ? Counterclockwise : Clockwise;
 
-	while (current->next != NULL) {
-		Direction directionX = (current->x > head->x) ? Clockwise : Counterclockwise;
-		Direction directionY = (current->y > head->y) ? Clockwise : Counterclockwise;
+		int moveX = (directionX == Counterclockwise) ? (_coordinates[i + 1]->getX() - _coordinates[i]->getX()) : (_coordinates[i]->getX() - _coordinates[i + 1]->getX());
+		int moveY = (directionY == Counterclockwise) ? (_coordinates[i + 1]->getY() - _coordinates[i]->getX()) : (_coordinates[i]->getY() - _coordinates[i + 1]->getY());
 
-		int moveX = (directionX == Clockwise) ? (current->x - head->x) : (head->x - current->x);
-		int moveY = (directionY == Clockwise) ? (current->y - head->y) : (head->y - current->y);
-		
+		Serial.println("DEBUG: Moving " + (String)moveX + " x " + (String) moveY);
+
 		move(moveX, moveY, directionX, directionY);
 
 		pickUp();
@@ -129,30 +95,37 @@ void Stockroom::findProducts() {
 * Runs the engines until the positions moved for that engine is reached by targetPosition
 */
 void Stockroom::move(int x, int y, Direction directionX, Direction directionY) {
-	Serial.println("DEBUG: Moving " + (String) x + "x" + (String) y + " positions.");
+	Serial.println("DEBUG: Moving " + (String)x + "x" + (String)y + " positions.");
 	int positionsMovedX = 0;
 	int positionsMovedY = 0;
 
-	while (positionsMovedX < x || positionsMovedY < y) {
-		positionsMovedX = _stockroomXLocater->targetPosition(x, positionsMovedX);
-		positionsMovedY = _stockroomYLocater->targetPosition(y, positionsMovedY);
-
+	while (positionsMovedX <= x) {
+		//Serial.println("DEBUG: " + (String) positionsMovedX + " of " + (String) x);
+		
 		if (positionsMovedX == x) {
 			_xAxes->stop();
 		}
 		else {
+			positionsMovedX = _stockroomXLocater->targetPosition(x, positionsMovedX);
+			//Serial.println("DEBUG: Now " + (String)positionsMovedX + " moved on the X axes");
 			_xAxes->run(150, directionX);
 		}
+	}
 
+	while (positionsMovedY <= y) {
 		if (positionsMovedY == y) {
 			_yAxes->stop();
 		}
 		else {
-			if (directionY == Clockwise) {
+			positionsMovedY = _stockroomYLocater->targetPosition(y, positionsMovedY);
+
+			Serial.println("Now " + (String)positionsMovedY + " moved on the Y axes");
+
+			if (directionY == Counterclockwise) {
 				_yAxes->run(255, directionY);
 			}
 			else {
-				_yAxes->run(180, directionY);
+				_yAxes->run(150, directionY);
 			}
 		}
 	}
@@ -169,7 +142,7 @@ void Stockroom::pickUp() {
 	_xAxes->run(100, Clockwise);
 	delay(100);
 	_xAxes->stop();
-	
+
 	_spoon->write(130);
 
 	_xAxes->run(100, Counterclockwise);
@@ -187,18 +160,19 @@ void Stockroom::moveToSorter() {
 	int positionsMovedX = 0;
 	int positionsMovedY = 0;
 
-	while (positionsMovedX < current->x || positionsMovedY < current->y) {
-		positionsMovedX = _stockroomXLocater->targetPosition((current->x--), positionsMovedX);
-		positionsMovedY = _stockroomYLocater->targetPosition((current->y--), positionsMovedY);
+	int moveX = (_coordinates.back()->getX() - 1);
+	while (positionsMovedX < moveX || positionsMovedY < (_coordinates.back()->getY() - 1)) {
+		positionsMovedX = _stockroomXLocater->targetPosition((_coordinates.back()->getX() - 1), positionsMovedX);
+		positionsMovedY = _stockroomYLocater->targetPosition((_coordinates.back()->getY() - 1), positionsMovedY);
 
-		if (positionsMovedX == current->x) {
+		if (positionsMovedX == (_coordinates.back()->getX() - 1)) {
 			_xAxes->stop();
 		}
 		else {
 			_xAxes->run(255, Counterclockwise);
 		}
 
-		if (positionsMovedY == current->y) {
+		if (positionsMovedY == (_coordinates.back()->getY() - 1)) {
 			_yAxes->stop();
 		}
 		else {
@@ -226,7 +200,7 @@ void Stockroom::moveToSorter() {
 	int atDropHeight = 0;
 
 	while (atDropHeight < 1) {
-		if(atDropHeight == 1) {
+		if (atDropHeight == 1) {
 			_yAxes->stop();
 		}
 		else {

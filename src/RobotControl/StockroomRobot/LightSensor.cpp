@@ -8,7 +8,7 @@ int LightSensor::targetPosition(int movePositions, int positionsMoved) {
 	if (positionsMoved < movePositions) {
 		if (GetDifference() > 200) {
 			positionsMoved++;
-			Serial.println("DEBUG: LightSensor -> Significant measurement at pin " + (String)_pin + " of " + (String)GetDifference() + " measured. Now at " + (String)positionsMoved + ".");
+			//Serial.println("DEBUG: LightSensor -> Significant measurement at pin " + (String)_pin + " of " + (String)GetDifference() + " measured. Now at " + (String)positionsMoved + ".");
 		}
 	}
 

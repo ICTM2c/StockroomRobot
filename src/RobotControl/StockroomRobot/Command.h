@@ -2,19 +2,30 @@
 #include "LightSensor.h"
 #include "Server.h"
 #include "Stockroom.h"
+#include <vector>
 
 #pragma once
 
-struct action {
-	String command;
-	String parameter;
-	action *next;
+struct CommandItem {
+	String _command;
+	String _parameter;
+
+	CommandItem(String command, String parameter) {
+		_command = command;
+		_parameter = parameter;
+	}
+
+	String getCommand() {
+		return _command;
+	}
+
+	String getParameter() {
+		return _parameter;
+	}
 };
 
 class Command {
 private:
-	action * head, * tail;
-
 	Engine * _xAxes;
 	Engine * _yAxes;
 	LightSensor * _stockroomXLocater;
@@ -24,7 +35,8 @@ private:
 
 	Stockroom * _stockroom = new Stockroom(_xAxes, _yAxes, _stockroomXLocater, _stockroomYLocater, _spoon, _positionLocater);
 
-	bool busy = false;
+	bool _busy = false;
+	std::vector <CommandItem*> _commandList = std::vector<CommandItem*>();
 
 public:
 	Command(Engine * xAxes, Engine * yAxes, LightSensor * stockroomXLocater, LightSensor * stockroomYLocater, Servo * spoon, LightSensor * positionLocater) :
@@ -34,11 +46,10 @@ public:
 		_stockroomYLocater(stockroomYLocater),
 		_spoon(spoon),
 		_positionLocater(positionLocater) {
-		head = NULL;
-		tail = NULL;
+
 	}
 
-	void addCommand(String command, String parameter);
+	void addCommand(String CommandItem, String parameter);
 
 	bool doingNothing();
 
